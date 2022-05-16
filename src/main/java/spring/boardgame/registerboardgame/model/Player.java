@@ -10,7 +10,7 @@ public class Player {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
-    private int id;
+    private Long id;
     
     @Column
     private String fornavn;
@@ -39,7 +39,7 @@ public class Player {
     public  Player() {
     }
 
-    public Player(String tenavn, String tfnavn, int orgId, Integer trett, Integer overl, String faceb, String tepost, String tbruk, String tpass) {
+    public Player(String tenavn, String tfnavn, Long orgId, Integer trett, Integer overl, String faceb, String tepost, String tbruk, String tpass) {
        this.fornavn = tfnavn;
        this.etternavn = tenavn;
        this.id = orgId;
@@ -51,10 +51,10 @@ public class Player {
        this.passord = tpass;
     }
     
-    public int getId() {
+    public Long getId() {
         return this.id;
     }   
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
     public String getFornavn(){
