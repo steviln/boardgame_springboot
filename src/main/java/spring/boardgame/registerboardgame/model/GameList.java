@@ -1,17 +1,18 @@
 package spring.boardgame.registerboardgame.model;
 
+import java.util.Optional;
 import javax.persistence.*;
 import org.hibernate.annotations.Immutable;
 
 @Entity
 @Immutable
 @Table(name = "gamelist")
-public class GameList {
+public class GameList implements Comparable<GameList>{
 	
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
-    private int id;
+    private Integer id;
 	
 	@Column
 	private String navn;
@@ -29,10 +30,10 @@ public class GameList {
 		this.spillinger = spillings;
 	}
 	
-    public int getId() {
+    public Integer getId() {
         return this.id;
     }   
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
     
@@ -50,7 +51,13 @@ public class GameList {
     public String getNavn() {
     	return this.navn;
     }
-	
+    
+  
+    
+    @Override
+    public int compareTo(GameList compto){
+        return this.navn.compareTo(compto.getNavn());
+    }
 	
 
 }
