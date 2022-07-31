@@ -20,6 +20,7 @@ import spring.boardgame.registerboardgame.model.dto.FactionRankingDTO;
 import spring.boardgame.registerboardgame.session.Session;
 import spring.boardgame.registerboardgame.service.mapping.MappingGamesessionService;
 import spring.boardgame.registerboardgame.model.dto.CompleteGameDataDTO;
+import spring.boardgame.registerboardgame.model.dto.CompletePlayerDataDTO;
 
 
 // Need to check what happens if something goes completely wrong
@@ -117,6 +118,12 @@ public class MainController {
         return fetcher.fetchPlayer(id);
     }
     
+    @GetMapping(value = "completeplayer")
+    @CrossOrigin(origins = crossorg)
+    public CompletePlayerDataDTO getCompletePlayer(@RequestParam Long id){
+        return fetcher.fetchCompletePlayerData(id);
+    }
+    
     @PreAuthorize("hasPermission(#id, 'Player', 'private')")
     @GetMapping(value = "editplayer")
     @CrossOrigin(origins = crossorg)
@@ -157,10 +164,10 @@ public class MainController {
         return fetcher.fetchUser(id);
     }
     
+    
     @GetMapping(value = "factionrankings", produces = "application/json")
     @CrossOrigin(origins = crossorg)
     public CompleteGameDataDTO getFactionRankingsForGame(@RequestParam Long id){
-        //return fetcher.fetchFactionRankingsForGame(new Long(19));
         return fetcher.fetchCompleteGameData(id);
     }
     

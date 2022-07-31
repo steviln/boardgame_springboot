@@ -18,6 +18,8 @@ import spring.boardgame.registerboardgame.model.dto.FactionRankingDTO;
 import spring.boardgame.registerboardgame.model.dto.CompleteGameDataDTO;
 import spring.boardgame.registerboardgame.service.mapping.MappingGamesessionService;
 import spring.boardgame.registerboardgame.model.dto.PlayerRankingDTO;
+import spring.boardgame.registerboardgame.privacy.PlayerPrivacyFilter;
+import spring.boardgame.registerboardgame.model.dto.CompletePlayerDataDTO;
 
 
 
@@ -54,6 +56,9 @@ public class DataFetcher {
     
     @Autowired
     private MappingGamesessionService mappingService;
+    
+    @Autowired
+    private PlayerPrivacyFilter privacyfilter;
             
     public HashMap<String,Iterable> fetchGameList(){
         HashMap<String,Iterable> returverdi = new HashMap<String,Iterable>();
@@ -107,7 +112,7 @@ public class DataFetcher {
     }
     
     public Iterable<PlayerRanking> fetchFrontpagePlayerList(){       
-        return this.frontplayerlist.findAll();
+        return this.privacyfilter.filterPlayerFrontpageList(this.frontplayerlist.findAll());
     }
     
     public Iterable<GameList> fetchFrontpageGamesList(){
@@ -119,11 +124,11 @@ public class DataFetcher {
     }
     
     public Iterable<Player> fetchPlayerList(){
-        return this.playerrepo.findAll();
+        return this.privacyfilter.filterPlayerlist(this.playerrepo.findAll());
     }
     
     public Iterable<PlayerList> fetchPlayerListDisplay(){
-        return this.playerlistrepo.findAll();
+        return this.privacyfilter.filterPlayerListList(this.playerlistrepo.findAll());
     }
     
     public CompleteGameDataDTO fetchCompleteGameData(Long id){
@@ -141,6 +146,21 @@ public class DataFetcher {
         }
         
         return completeDTO;
+    }
+    
+    public CompletePlayerDataDTO fetchCompletePlayerData(Long id){
+        
+        CompletePlayerDataDTO completeDTO = new CompletePlayerDataDTO();
+        Optional<Player> tempPlayer = playerrepo.findById(id);
+        tempPlayer = this.privacyfilter.filterPlayerObject(tempPlayer);
+        if(!tempPlayer.isEmpty()){
+            Player usePlayer = tempPlayer.get();
+            completeDTO.setPlayer(new PlayerDisplay(usePlayer.getEtternavn(), usePlayer.getFornavn(), id));
+            completeDTO.setPlayerRankings(this.mappingService.findPlayerRankingsForPlayer(id));
+        }
+        
+        return completeDTO;
+    
     }
     
 }

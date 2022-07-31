@@ -4,10 +4,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import spring.boardgame.registerboardgame.model.dto.FactionRankingDTO;
 import spring.boardgame.registerboardgame.model.dto.PlayerRankingDTO;
+import spring.boardgame.registerboardgame.model.dto.PlayerRankingsDTO;
 import spring.boardgame.registerboardgame.model.dto.FactionPlayerRankingDTO;
 import spring.boardgame.registerboardgame.repository.GameSessionRepository;
 import java.util.List;
 import java.util.stream.Collectors;
+import spring.boardgame.registerboardgame.privacy.PlayerPrivacyFilter;
 
 
 @Service
@@ -15,6 +17,9 @@ public class MappingGamesessionService {
     
     @Autowired
     private GameSessionRepository sourcerepo;
+    
+    @Autowired
+    private PlayerPrivacyFilter privacyfilter;
        
     
     public List<FactionRankingDTO> findFactionRankingsForGame(Long id){    
@@ -22,11 +27,15 @@ public class MappingGamesessionService {
     }
     
     public List<PlayerRankingDTO> findPlayerRankingsForGame(Long id){    
-        return ((List<PlayerRankingDTO>) this.sourcerepo.findPlayerRankings(id).stream().map(obj -> this.convertToPlayerRankingDTO(obj)).collect(Collectors.toList()));                             
+        return this.privacyfilter.filterPlayerRanking((List<PlayerRankingDTO>) this.sourcerepo.findPlayerRankings(id).stream().map(obj -> this.convertToPlayerRankingDTO(obj)).collect(Collectors.toList()));                             
     }
     
     public List<FactionPlayerRankingDTO> findFactionPlayerRankingsForGame(Long id){    
-        return ((List<FactionPlayerRankingDTO>) this.sourcerepo.findPlayerByFactionrankings(id).stream().map(obj -> this.convertToFactionPlayerRankingDTO(obj)).collect(Collectors.toList()));                             
+        return this.privacyfilter.filterFactionPlayerRanking((List<FactionPlayerRankingDTO>) this.sourcerepo.findPlayerByFactionrankings(id).stream().map(obj -> this.convertToFactionPlayerRankingDTO(obj)).collect(Collectors.toList()));                             
+    }
+    
+    public List<PlayerRankingsDTO> findPlayerRankingsForPlayer(Long id){
+        return this.sourcerepo.findPlayerRankOverview(id).stream().map(obj -> this.convertToPlayerRankingsDTO(obj)).collect(Collectors.toList());
     }
     
     private PlayerRankingDTO convertToPlayerRankingDTO(Object[] source){    
@@ -39,6 +48,10 @@ public class MappingGamesessionService {
     
     private FactionRankingDTO convertToFactionRankingDTO(Object[] source){        
         return new FactionRankingDTO(source[0].toString(),source[1].toString(),source[2].toString());             
+    }
+    
+    private PlayerRankingsDTO convertToPlayerRankingsDTO(Object[] source){
+        return new PlayerRankingsDTO(source[0].toString(),source[1].toString(),source[2].toString());
     }
     
     private Long convertStringToLong(String convert){
