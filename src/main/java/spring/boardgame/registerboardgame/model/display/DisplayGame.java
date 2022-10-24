@@ -1,14 +1,12 @@
-package spring.boardgame.registerboardgame.model;
+package spring.boardgame.registerboardgame.model.display;
 
 import javax.persistence.*;
 // Generated 19-May-2016 11:52:48 by Hibernate Tools 4.3.1
 
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "game")
-public class Game implements java.io.Serializable {
+public class DisplayGame implements java.io.Serializable {
 
 
      @Id
@@ -28,40 +26,18 @@ public class Game implements java.io.Serializable {
      @Column
      private Long selskap;
 
-     
-     @OneToMany(fetch = FetchType.EAGER,cascade=CascadeType.ALL)
-     @JoinColumn(name="spillID")
-     private Set<Faction> fraksjoner;
 
-     @OneToMany(fetch = FetchType.EAGER,cascade=CascadeType.ALL)
-     @JoinColumn(name="spillID")
-     private Set<Scenario> scenarios;
 
-    public Game() {
+    public DisplayGame() {
     }
 
-    public Game(String navn, String boardgamegeekId, Integer antall, Long tse) {
+    public DisplayGame(String navn, String boardgamegeekId, Integer antall, Long tse) {
        this.navn = navn;
        this.boardgamegeekId = boardgamegeekId;
        this.antall = antall;
        this.selskap = tse;
     }
-    
-    public Set<Faction> getFraksjoner(){
-        return this.fraksjoner;
-    }
-    
-    public void setFraksjoner(Set<Faction> frak){
-        this.fraksjoner = frak;
-    }
-    
-        public Set<Scenario> getScenarios(){
-        return this.scenarios;
-    }
-    
-    public void setScenarios(Set<Scenario> frak){
-        this.scenarios = frak;
-    }
+
     
     public void setSelskap(Long newValue){
         this.selskap = newValue;
@@ -103,5 +79,3 @@ public class Game implements java.io.Serializable {
 
 
 }
-
-

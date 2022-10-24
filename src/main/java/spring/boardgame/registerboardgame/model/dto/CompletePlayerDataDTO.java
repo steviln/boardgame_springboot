@@ -2,7 +2,7 @@ package spring.boardgame.registerboardgame.model.dto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import spring.boardgame.registerboardgame.service.mapping.MappingGamesessionService;
-import spring.boardgame.registerboardgame.model.PlayerDisplay ;
+import spring.boardgame.registerboardgame.model.Player;
 import spring.boardgame.registerboardgame.repository.GameRepository;
 import java.util.Optional;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
 
 public class CompletePlayerDataDTO {
 
-    private PlayerDisplay player = null;
+    private Player player = null;
     private List<PlayerRankingsDTO> playerRankings = null;
 
 
@@ -20,11 +20,11 @@ public class CompletePlayerDataDTO {
     }
 
     
-    public void setPlayer(PlayerDisplay newValue){
+    public void setPlayer(Player newValue){
         this.player = newValue;
     }
     
-    public PlayerDisplay getPlayer(){
+    public Player getPlayer(){
         return this.player;
     }
     

@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import spring.boardgame.registerboardgame.model.Gamesession;
+import spring.boardgame.registerboardgame.model.display.SingleGamesession;
 import spring.boardgame.registerboardgame.model.SessionList;
 import spring.boardgame.registerboardgame.model.dto.CompleteGameDataDTO;
 import spring.boardgame.registerboardgame.service.DataFetcher;
 import spring.boardgame.registerboardgame.service.DataSaver;
+import spring.boardgame.registerboardgame.service.AuxillaryFetcher;
 import spring.boardgame.registerboardgame.service.mapping.MappingGamesessionService;
 
 
@@ -32,6 +34,11 @@ public class GamesessionController {
     
     @Autowired
     MappingGamesessionService gamesessionservice;
+    
+    @Autowired
+    AuxillaryFetcher auxillary;
+
+    
     
     @GetMapping(value = "gamesession",produces = "application/json")
     @CrossOrigin(origins = crossorg)
@@ -56,6 +63,18 @@ public class GamesessionController {
     @CrossOrigin(origins = crossorg)
     public CompleteGameDataDTO getFactionRankingsForGame(@RequestParam Long id){
         return fetcher.fetchCompleteGameData(id);
+    }
+    
+    @GetMapping(value = "gamesessionsforgame", produces = "application/json")
+    @CrossOrigin(origins = crossorg)
+    public Iterable<Gamesession> Gamesessions(@RequestParam Long id){
+        return fetcher.fetchGameSessionListByGame(id);
+    }
+    
+    @GetMapping(value = "displaygamesession",produces = "application/json")
+    @CrossOrigin(origins = crossorg)
+    public SingleGamesession getSingleGamesession(@RequestParam Long id){
+        return auxillary.addSingleGameSessionAuxillaries(fetcher.getSingleGamesession(id));
     }
     
 }

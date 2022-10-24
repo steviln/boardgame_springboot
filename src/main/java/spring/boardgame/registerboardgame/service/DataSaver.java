@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
+import javax.annotation.Resource;
 import spring.boardgame.registerboardgame.repository.*;
 import spring.boardgame.registerboardgame.model.*;
+import spring.boardgame.registerboardgame.session.Session;
 
 /**
  *
@@ -21,6 +23,9 @@ public class DataSaver {
     private PlayerRepository playerrepo;
     
     @Autowired
+    private UserRepository userrepo;
+    
+    @Autowired
     private GameRepository gamerepo;
     
     @Autowired
@@ -29,7 +34,13 @@ public class DataSaver {
     @Autowired 
     private GameSessionRepository gamenightrepo;
     
-    public Player savePlayer(Player newPlayer, Player oldPlayer){
+    @Autowired
+    DataFetcher fetcher;
+    
+    @Resource(name = "returnSession")
+    Session mainsession;
+    
+    public User savePlayer(User newPlayer, User oldPlayer){
     
         String newPassword = newPlayer.getPassord();
         if(newPassword != null && !newPassword.equals("")){
@@ -41,7 +52,7 @@ public class DataSaver {
         
         oldPlayer.setEpost(newPlayer.getEpost());
         
-        return playerrepo.save(oldPlayer);
+        return userrepo.save(oldPlayer);
 
     }
     
@@ -59,17 +70,18 @@ public class DataSaver {
 
     public Gamesession SaveGamesession(Gamesession newSession){
     
+        newSession.setRegistrar(this.fetcher.fetchPlayer(this.mainsession.getUser().getId()));
         this.gamenightrepo.save(newSession);
         return newSession;
     }
     
-    public Player createPlayer(Player newPlayer){
+    public User createPlayer(User newPlayer){
         String newPassword = newPlayer.getPassord();
         if(newPassword != null && !newPassword.equals("")){
             newPlayer.setPassord(newPassword);
         }
         
-        return playerrepo.save(newPlayer);
+        return this.userrepo.save(newPlayer);
        
     }
     

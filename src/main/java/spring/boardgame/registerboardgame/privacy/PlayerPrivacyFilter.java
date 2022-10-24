@@ -10,6 +10,10 @@ import spring.boardgame.registerboardgame.model.dto.FactionPlayerRankingDTO;
 import spring.boardgame.registerboardgame.model.Player;
 import spring.boardgame.registerboardgame.model.PlayerList;
 import spring.boardgame.registerboardgame.model.PlayerRanking;
+import spring.boardgame.registerboardgame.model.Gamesession;
+import spring.boardgame.registerboardgame.model.Participation;
+import spring.boardgame.registerboardgame.model.display.SingleGamesession;
+import spring.boardgame.registerboardgame.model.display.DisplayParticipation;
 import java.util.Optional;
 
 
@@ -77,6 +81,74 @@ public class PlayerPrivacyFilter {
             }
             return players;
         }    
+    }
+    
+    private Integer findStatus(){
+         if(this.mainsession.getUser() == null || this.mainsession.getUser().findMaxStatus() == 0){
+            return 0;
+        }else if(this.mainsession.getUser().findMaxStatus() >= 80){
+            return 2;
+        }else{
+            return 1;
+        }     
+    }
+    
+    public Iterable<Gamesession> filterGamesessions(Iterable<Gamesession> sessions){
+    
+        Integer status = this.findStatus();
+        for(Gamesession session: sessions){
+            if(session.getRegistrar() != null){
+                session.setRegistrar(this.filterRegistrar(session.getRegistrar(), status));
+            }
+        }
+        
+        return sessions;
+    }
+    
+    public SingleGamesession filterSingleGamesession(SingleGamesession filterMe){
+    
+        Integer status = this.findStatus();
+        Player theplayer = null;
+        if(filterMe == null || status == 2){
+            return filterMe;
+        }else if(status == 1){
+            for(DisplayParticipation participate : filterMe.getDeltakelser()){
+                if((theplayer = participate.getSpiller()) != null){
+                    if(theplayer.getId() != this.mainsession.getUser().getId()){
+                        theplayer.setFornavn("Spiller" + theplayer.getId().toString());
+                        theplayer.setEtternavn("");
+                    }
+                }
+            }
+            return filterMe;
+        }else{
+            for(DisplayParticipation participate : filterMe.getDeltakelser()){
+                if((theplayer = participate.getSpiller()) != null){
+                        theplayer.setFornavn("Spiller" + theplayer.getId().toString());
+                        theplayer.setEtternavn("");
+                }
+            }
+            return filterMe;
+        }
+    
+    }
+    
+    private Player filterRegistrar(Player register, Integer status){
+        
+        if(status == 0){
+            if(register != null){
+                register.setFornavn("Spiller" + register.getId().toString());
+                register.setEtternavn("");
+            }
+        }else if(status == 1){
+            if(register.getId() != this.mainsession.getUser().getId()){
+                register.setFornavn("Spiller" + register.getId().toString());
+                register.setEtternavn("");
+           }
+
+        }    
+        
+        return register;
     }
     
     public Iterable<PlayerList> filterPlayerListList(Iterable<PlayerList> players){

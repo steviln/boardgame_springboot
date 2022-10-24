@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import spring.boardgame.registerboardgame.model.Player;
+import spring.boardgame.registerboardgame.model.User;
 import spring.boardgame.registerboardgame.model.dto.CompletePlayerDataDTO;
 import spring.boardgame.registerboardgame.service.DataFetcher;
 import spring.boardgame.registerboardgame.service.DataSaver;
@@ -52,18 +53,18 @@ public class PlayerController {
     @PreAuthorize("hasPermission(#id, 'Player', 'private')")
     @GetMapping(value = "editplayer")
     @CrossOrigin(origins = crossorg)
-    public Player getEditPlayerAuthorize(@RequestParam Long id){
-        return fetcher.fetchPlayer(id);
+    public User getEditPlayerAuthorize(@RequestParam Long id){
+        return fetcher.fetchUser(id);
     }
     
     @PreAuthorize("hasPermission(#id, 'Player', 'private')")
     @PostMapping(value = "editplayer")
     @CrossOrigin(origins = crossorg)
-    public Player postEditPlayerAuthorize(@RequestBody Player payload){
+    public User postEditPlayerAuthorize(@RequestBody User payload){
         if(payload.getId() == null){
             payload = saver.createPlayer(payload);
         }else{
-            Player storedPlayer = fetcher.fetchPlayer(payload.getId());
+            User storedPlayer = fetcher.fetchUser(payload.getId());
             payload = saver.savePlayer(payload, storedPlayer);
         }
         return payload;

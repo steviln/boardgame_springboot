@@ -20,7 +20,8 @@ import spring.boardgame.registerboardgame.service.mapping.MappingGamesessionServ
 import spring.boardgame.registerboardgame.model.dto.PlayerRankingDTO;
 import spring.boardgame.registerboardgame.privacy.PlayerPrivacyFilter;
 import spring.boardgame.registerboardgame.model.dto.CompletePlayerDataDTO;
-
+import spring.boardgame.registerboardgame.repository.SingleGamesessionRepository;
+import spring.boardgame.registerboardgame.model.display.SingleGamesession;
 
 
 
@@ -47,6 +48,9 @@ public class DataFetcher {
     
     @Autowired 
     private GameSessionRepository gamenightrepo;
+    
+    @Autowired 
+    private SingleGamesessionRepository singlegamenightrep;
     
     @Autowired
     private SessionListRepository sessionlistrep;
@@ -90,6 +94,13 @@ public class DataFetcher {
         return result.get();
     }
     
+    public SingleGamesession getSingleGamesession(Long id){
+        Optional<SingleGamesession> result = this.singlegamenightrep.findById(id);
+        SingleGamesession retur = result.get();
+        retur = this.privacyfilter.filterSingleGamesession(retur);
+        return retur;
+    }
+    
     public Gamesession fetchSession(Long id){
         Gamesession returner = null;
         try{
@@ -110,6 +121,12 @@ public class DataFetcher {
         Optional<Player> result = this.playerrepo.findById(id);
         return result.get();
     }
+
+    
+        public Player fetchPlayerDisplay(Long id){
+        Optional<Player> result = this.playerrepo.findById(id);
+        return result.get();
+    }
     
     public Iterable<PlayerRanking> fetchFrontpagePlayerList(){       
         return this.privacyfilter.filterPlayerFrontpageList(this.frontplayerlist.findAll());
@@ -121,6 +138,11 @@ public class DataFetcher {
     
     public Iterable<Selskap> fetchSelskap(){
         return this.selskaprepo.findAll();
+    }
+    
+    public Iterable<Gamesession> fetchGameSessionListByGame(Long gameID){
+        Iterable<Gamesession> sessions = this.privacyfilter.filterGamesessions(this.gamenightrepo.findBySpillet(gameID));
+        return sessions;
     }
     
     public Iterable<Player> fetchPlayerList(){
@@ -155,7 +177,7 @@ public class DataFetcher {
         tempPlayer = this.privacyfilter.filterPlayerObject(tempPlayer);
         if(!tempPlayer.isEmpty()){
             Player usePlayer = tempPlayer.get();
-            completeDTO.setPlayer(new PlayerDisplay(usePlayer.getEtternavn(), usePlayer.getFornavn(), id));
+            completeDTO.setPlayer(new Player(usePlayer.getEtternavn(), usePlayer.getFornavn(), id));
             completeDTO.setPlayerRankings(this.mappingService.findPlayerRankingsForPlayer(id));
         }
         

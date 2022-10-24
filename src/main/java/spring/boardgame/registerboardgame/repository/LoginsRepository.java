@@ -18,7 +18,7 @@ public interface LoginsRepository extends CrudRepository<Logins, Long> {
     
     @Transactional
     @Modifying
-    @Query(value = "DELETE FROM logins WHERE dato < (NOW() - INTERVAL 5 HOUR);", nativeQuery = true)
+    @Query(value = "DELETE FROM logins WHERE dato > (NOW() - INTERVAL 5 HOUR);", nativeQuery = true)
     void deleteOldLogins();
      
 }
