@@ -1,0 +1,16 @@
+version: '1'
+name: boardgamemysql
+services:
+    db:
+        image: mysql
+        restart: always
+        environment:
+            MYSQL_DATABASE: drammenb_boardgamegroup
+            MYSQL_ROOT_PASSWORD: sdfsdf456hYUmmbv
+        ports: 
+            - 6603:3306
+        volumes:
+            - ./base:/docker-entrypoint-initdb.d
+networks:
+    default:
+        name: boardgame-network
